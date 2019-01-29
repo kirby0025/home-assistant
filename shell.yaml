@@ -1,0 +1,2 @@
+start_raspotify: sudo systemctl start raspotify
+stop_raspotify: sudo systemctl stop raspotify

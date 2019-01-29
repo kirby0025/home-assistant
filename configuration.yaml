@@ -1,0 +1,67 @@
+homeassistant:
+  name: Home
+  latitude: !secret lat
+  longitude: !secret long
+  elevation: !secret elev
+  unit_system: metric
+  time_zone: CET
+  customize: !include customize.yaml
+
+# Enables the frontend
+frontend:
+  themes: !include themes.yaml
+# Enables configuration UI
+config:
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+notify:
+  - name: email_kirby
+    platform: smtp
+    server: !secret smtp_server
+    port: !secret smtp_port
+    timeout: 15
+    sender: !secret smtp_sender
+    encryption: starttls
+    username: !secret smtp_user
+    password: !secret smtp_password
+    recipient: !secret smtp_recipient
+    sender_name: Home Assistant
+
+# Sensors
+automation: !include automations.yaml
+binary_sensor: !include binarysensors.yaml
+group: !include groups.yaml
+script: !include scripts.yaml
+sensor: !include sensors.yaml
+shell_command: !include shell.yaml
+switch: !include switch.yaml
+
+meteo_france:
+  - postal_code: !secret postal_code
+    monitored_conditions:
+        - rain_chance
+        - freeze_chance
+        - thunder_chance
+        - snow_chance
+        - weather
+        - next_rain
+        - wind_speed
+        - temperature
+        - uv
