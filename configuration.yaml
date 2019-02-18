@@ -7,6 +7,12 @@ homeassistant:
   time_zone: CET
   customize: !include customize.yaml
 
+lovelace:
+  mode: yaml
+
+http:
+  api_password: !secret password_api
+
 # Enables the frontend
 frontend:
   themes: !include themes.yaml
@@ -54,7 +60,7 @@ shell_command: !include shell.yaml
 switch: !include switch.yaml
 
 meteo_france:
-  - postal_code: !secret postal_code
+  - postal_code: !secret code_postal
     monitored_conditions:
         - rain_chance
         - freeze_chance

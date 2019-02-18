@@ -1,0 +1,81 @@
+title: Home
+views:
+  - title : Default
+    path: "default_view"
+    badges:
+      - binary_sensor.workday_sensor
+      - binary_sensor.portable
+      - sensor.discogs
+      - sensor.home
+      - sensor.whois_lastname
+      - sensor.pi_hole_dns_queries_today
+      - sensor.pi_hole_seen_clients
+      - sensor.whois_main
+      - sensor.waqi_villeurbanne_place_grandclement_france
+      - sensor.pi_hole_domains_blocked
+      - sensor.pi_hole_dns_unique_domains
+      - sensor.pi_hole_dns_unique_clients
+      - sensor.pi_hole_ads_blocked_today
+    cards:
+      - title: "Automatisation"
+        type: entities
+        entities:
+          - automation.rain_incoming
+          - automation.home_hyrule_ovh_changed
+          - automation.raspotify_stop
+          - automation.wol_promox_we
+          - automation.raspotify_start
+          - automation.wol_promox_wd
+          - automation.neige_incoming
+      - title: "Interrupteur"
+        type: entities
+        entities:
+          - switch.raspotify
+          - switch.fixe
+          - switch.proxmox
+      - type: entities
+        title: "Mise \u00e0 jour"
+        entities:
+          - updater.updater
+      - type: weather-forecast
+        entity: weather.villeurbanne
+  - title: "Meteo"
+    cards:
+      - title: "Air Pollution"
+        type: history-graph
+        entities:
+          - entity: sensor.waqi_villeurbanne_place_grandclement_france
+            name: "PM10"
+        hours_to_show: 48
+      - title: "Meteo"
+        type: weather-forecast
+        entity: weather.villeurbanne
+  - title: "Network"
+    cards:
+      - title: "Pihole"
+        type: history-graph
+        entities:
+          - entity: sensor.pi_hole_dns_queries_today
+            name: "DNS queries today"
+          - entity: sensor.pi_hole_ads_blocked_today
+            name: "Ads blocked today"
+          - entity: sensor.pi_hole_dns_unique_domains
+            name: "Unique domain query"
+          - entity: sensor.pi_hole_domains_blocked
+            name: "Domains blocked"
+      - title: "Domain name expiration"
+        type: horizontal-stack
+        cards:
+          - type: sensor
+            entity: sensor.whois_main
+            name: "Hyrule.ovh"
+          - type: sensor
+            entity: sensor.whois_lastname
+            name: "Laithier.ovh"
+      - type: entities
+        title: "WakeOnLan"
+        entities:
+          - switch.fixe
+          - switch.proxmox
+          - binary_sensor.portable
+        show_header_toggle: false

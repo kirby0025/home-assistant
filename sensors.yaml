@@ -1,7 +1,7 @@
 - platform: discogs
   token: !secret discogs_token
 - platform: dnsip
-  hostname: !secret dns_home 
+  hostname: !secret dns_home
   name: home
   resolver: 1.1.1.1
 - platform: whois
@@ -17,7 +17,7 @@
 #
 ################################
 #- platform: haveibeenpwned
-#  email: !secret haveibeenpwned_email 
+#  email: !secret haveibeenpwned_email
 - platform: pi_hole
   host: !secret pihole_host
   monitored_conditions:
