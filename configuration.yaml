@@ -12,6 +12,9 @@ lovelace:
 
 http:
   api_password: !secret password_api
+  base_url: !secret hass_url
+  use_x_forwarded_for: true
+  trusted_proxies: 127.0.0.1
 
 # Enables the frontend
 frontend:

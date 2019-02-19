@@ -4,6 +4,10 @@
   hostname: !secret dns_home
   name: home
   resolver: 1.1.1.1
+- platform: dnsip
+  hostname: !secret dns_main
+  name: main
+  resolver: 1.1.1.1
 - platform: whois
   domain: !secret dns_main
   name: whois_main

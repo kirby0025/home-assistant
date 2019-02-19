@@ -1,15 +1,17 @@
 - id: '1548543406979'
   alias: WOL-Promox-WD
   trigger:
-  - at: '18:30'
-    platform: time
+  - hours: '*'
+    minutes: /1
+    platform: time_pattern
+    seconds: '*'
   condition:
   - condition: state
     entity_id: switch.proxmox
     state: 'off'
   - condition: state
-    entity_id: binary_sensor.workday_sensor
-    state: 'on'
+    entity_id: binary_sensor.portable
+    state: 'off'
   action:
   - alias: ''
     data:

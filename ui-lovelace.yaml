@@ -52,6 +52,31 @@ views:
         entity: weather.villeurbanne
   - title: "Network"
     cards:
+      - title: "Domain name expiration"
+        type: horizontal-stack
+        cards:
+          - type: sensor
+            entity: sensor.whois_main
+            name: "Hyrule.ovh"
+          - type: sensor
+            entity: sensor.whois_lastname
+            name: "Laithier.ovh"
+      - title: "DNS"
+        type: horizontal-stack
+        cards:
+          - type: sensor
+            entity: sensor.home
+            name: "Home.hyrule.ovh"
+          - type: sensor
+            entity: sensor.main
+            name: "Hyrule.ovh"
+      - type: entities
+        title: "WakeOnLan"
+        entities:
+          - switch.fixe
+          - switch.proxmox
+          - binary_sensor.portable
+        show_header_toggle: false
       - title: "Pihole"
         type: history-graph
         entities:
@@ -63,19 +88,3 @@ views:
             name: "Unique domain query"
           - entity: sensor.pi_hole_domains_blocked
             name: "Domains blocked"
-      - title: "Domain name expiration"
-        type: horizontal-stack
-        cards:
-          - type: sensor
-            entity: sensor.whois_main
-            name: "Hyrule.ovh"
-          - type: sensor
-            entity: sensor.whois_lastname
-            name: "Laithier.ovh"
-      - type: entities
-        title: "WakeOnLan"
-        entities:
-          - switch.fixe
-          - switch.proxmox
-          - binary_sensor.portable
-        show_header_toggle: false
