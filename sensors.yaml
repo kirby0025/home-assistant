@@ -34,3 +34,13 @@
 - platform: waqi
   token: !secret waqi_api
   locations: !secret waqi_locations
+- platform: cert_expiry
+  host: !secret cert_main
+  name: cert_main
+- platform: cert_expiry
+  host: !secret cert_smtp
+  port: !secret cert_smtp_port
+  name: cert_smtp
+- platform: cert_expiry
+  host: !secret cert_hass
+  name: cert_hass

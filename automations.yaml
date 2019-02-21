@@ -1,17 +1,15 @@
 - id: '1548543406979'
   alias: WOL-Promox-WD
   trigger:
-  - hours: '*'
-    minutes: /1
+  - minutes: /1
     platform: time_pattern
-    seconds: '*'
   condition:
   - condition: state
     entity_id: switch.proxmox
     state: 'off'
   - condition: state
     entity_id: binary_sensor.portable
-    state: 'off'
+    state: 'on'
   action:
   - alias: ''
     data:
@@ -101,4 +99,37 @@
   - data:
       message: ''
       title: Public IP changed to {{ states.sensor.home.state }}
+    service: notify.email_kirby
+- id: '1550611366131'
+  alias: WoL-Fixe
+  trigger:
+  - hours: '*'
+    minutes: '''/1'''
+    platform: time_pattern
+    seconds: '*'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.portable
+    state: 'off'
+  action:
+  - data:
+      entity_id: switch.fixe
+    service: switch.turn_on
+- id: '1550611422711'
+  alias: WoL-Fixe
+  trigger: []
+  condition: []
+  action: []
+- id: '1550754446981'
+  alias: Cert-expired-main
+  trigger:
+  - below: '15'
+    entity_id: sensor.cert_main
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      message: 'Cert renewal issue for {{ states.sensor.cert_main.name }} : {{ states.sensor.cert_main.state
+        }}'
+      title: www.hyrule.ovh certificate
     service: notify.email_kirby
