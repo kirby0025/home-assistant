@@ -121,15 +121,21 @@
   condition: []
   action: []
 - id: '1550754446981'
-  alias: Cert-expired-main
+  alias: Cert-expired
   trigger:
   - below: '15'
     entity_id: sensor.cert_main
     platform: numeric_state
+  - below: '15'
+    entity_id: sensor.cert_smtp
+    platform: numeric_state
+  - below: '15'
+    entity_id: sensor.cert_home
+    platform: numeric_state
   condition: []
   action:
-  - data:
-      message: 'Cert renewal issue for {{ states.sensor.cert_main.name }} : {{ states.sensor.cert_main.state
-        }}'
-      title: www.hyrule.ovh certificate
+  - data_template:
+      message: 'Cert renewal issue for {{ states[trigger.to_state.domain][trigger.to_state.object_id].name }} :
+        {{ states[trigger.to_state.domain][trigger.to_state.object_id].state }} days remaining'
+      title: Certificate renewal failure
     service: notify.email_kirby

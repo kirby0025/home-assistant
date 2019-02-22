@@ -58,7 +58,7 @@ views:
             entity: sensor.cert_main
             name: "Hyrule.ovh"
           - type: sensor
-            entity: sensor.cert_hass
+            entity: sensor.cert_home
             name: "Hass"
       - title: "Certificate expiration"
         type: horizontal-stack

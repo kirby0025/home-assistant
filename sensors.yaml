@@ -36,11 +36,11 @@
   locations: !secret waqi_locations
 - platform: cert_expiry
   host: !secret cert_main
-  name: cert_main
+  name: !secret cert_main_name
 - platform: cert_expiry
   host: !secret cert_smtp
   port: !secret cert_smtp_port
-  name: cert_smtp
+  name: !secret cert_smtp_name
 - platform: cert_expiry
   host: !secret cert_hass
-  name: cert_hass
+  name: !secret cert_hass_name
