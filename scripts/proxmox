@@ -1,0 +1,64 @@
+#!/bin/bash
+
+COMMAND=$1
+TYPE=$2
+ID=$3
+
+USER=hass
+HOST=192.168.1.150
+VM_CMD="sudo /usr/sbin/qm"
+LXC_CMD="sudo /usr/bin/lxc"
+
+case "$1" in
+        status)
+            case "$2" in
+                vm)
+                    RETURN=$(ssh -q -t $USER@$HOST "$VM_CMD status $ID")
+                    STATUS=$(echo $RETURN |awk -F  " " '{print $2}')
+                    if [[ "$STATUS" == *"running"* ]]
+                    then
+                        exit
+                    else
+                        exit 1
+                    fi
+                    ;;
+                lxc)
+                    RETURN=$(ssh -t $USER@$HOST "$LXC_CMD-info -s $ID")
+                    STATUS=$(echo $RETURN |awk -F  " " '{print $2}')
+                    if [[ "$STATUS" == *"RUNNING"* ]]
+                    then
+                        exit
+                    else
+                        exit 1
+                    fi
+                    ;;
+                *)
+            esac;;
+        stop)
+            case "$2" in
+                vm)
+                    ssh -t $USER@$HOST "$VM_CMD shutdown $ID --forceStop"
+                    exit
+                    ;;
+                lxc)
+                    ssh -t $USER@$HOST "$LXC_CMD-stop -W $ID"
+                    exit
+                    ;;
+                *)
+            esac;;
+        start)
+            case "$2" in
+                vm)
+                    ssh -t $USER@$HOST "$VM_CMD start $ID"
+                    exit
+                    ;;
+                lxc)
+                    ssh -t $USER@$HOST "$LXC_CMD-start $ID"
+                    exit
+                    ;;
+                *)
+            esac
+            ;;
+        *)
+esac
+
