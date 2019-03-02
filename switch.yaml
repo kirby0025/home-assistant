@@ -13,3 +13,26 @@
     raspotify:
       command_on: "sudo systemctl start raspotify"
       command_off: "sudo systemctl stop raspotify"
+      command_state: "sudo systemctl status raspotify"
+- platform: command_line
+  switches:
+    emby:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop vm 107'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start vm 107'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 107'
+      friendly_name: Emby
+    sharing:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop vm 108'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start vm 108'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 108'
+      friendly_name: Sharing
+    jukebox:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop vm 103'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start vm 103'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 103'
+      friendly_name: Jukebox
+    pihole:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop vm 111'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start vm 111'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 111'
+      friendly_name: Pihole

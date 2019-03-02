@@ -4,6 +4,7 @@ views:
     path: "default_view"
     badges:
       - binary_sensor.workday_sensor
+      - calendar.personnel_holiday
       - sensor.discogs
       - sensor.waqi_villeurbanne_place_grandclement_france
     cards:
@@ -76,12 +77,21 @@ views:
             entity: sensor.main
             name: "Hyrule.ovh"
       - type: entities
-        title: "WakeOnLan"
+        title: "Physical"
         entities:
           - switch.fixe
           - switch.proxmox
           - binary_sensor.portable
         show_header_toggle: false
+      - type: entities
+        titles: "Virtual"
+        entities:
+          - switch.emby
+          - switch.sharing
+          - switch.pihole
+          - switch.jukebox
+  - title: "Graphs"
+    cards:
       - title: "Pihole"
         type: history-graph
         entities:
