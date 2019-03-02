@@ -6,6 +6,7 @@
 !*.yaml
 !.gitignore
 !*.md
+!scripts/proxmox
 
 # Ignore folders.
 .storage
