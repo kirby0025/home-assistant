@@ -53,15 +53,15 @@ notify:
     recipient: !secret smtp_recipient
     sender_name: Home Assistant
 
-# Sensors
-automation: !include automations.yaml
-binary_sensor: !include binarysensors.yaml
-group: !include groups.yaml
-script: !include scripts.yaml
-sensor: !include sensors.yaml
-shell_command: !include shell.yaml
-switch: !include switch.yaml
-
+calendar:
+  - platform: caldav
+    url: https://nextcloud.hyrule.ovh/remote.php/dav
+    username: !secret caldav_user
+    password: !secret caldav_password
+    custom_calendars:
+      - name: holiday
+        calendar: Personnel
+        search: 'Holiday'
 meteo_france:
   - postal_code: !secret code_postal
     monitored_conditions:
@@ -74,3 +74,12 @@ meteo_france:
         - wind_speed
         - temperature
         - uv
+
+# Sensors
+automation: !include automations.yaml
+binary_sensor: !include binarysensors.yaml
+group: !include groups.yaml
+script: !include scripts.yaml
+sensor: !include sensors.yaml
+shell_command: !include shell.yaml
+switch: !include switch.yaml
