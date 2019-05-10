@@ -84,7 +84,7 @@ views:
           - binary_sensor.portable
         show_header_toggle: false
       - type: entities
-        titles: "Virtual"
+        title: "Virtual"
         entities:
           - switch.emby
           - switch.sharing
