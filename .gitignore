@@ -8,6 +8,8 @@
 !*.md
 !scripts
 !proxmox
+!custom_components
+!panels
 
 # Ignore folders.
 .storage
