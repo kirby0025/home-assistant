@@ -7,7 +7,6 @@
 !.gitignore
 !*.md
 !scripts
-!proxmox
 !custom_components
 !panels
 
