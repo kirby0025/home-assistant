@@ -12,8 +12,8 @@ class DiscogsCard extends LitElement {
   static get styles() {
     return css`
       ha-card {
-        width: 500px;
-        height: 500px;
+        width: 350px;
+        height: 350px;
         background-size: cover;
         display: flex;
         flex-direction: column;

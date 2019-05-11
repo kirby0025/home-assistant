@@ -4,12 +4,14 @@ resources:
 
 title: Home
 views:
-  - title : Misc
+  - title : "Misc"
     path: "default_view"
     cards: !include lovelace/views/misc.yaml
-  - title: "Meteo"
+  - title: "Weather"
     cards: !include lovelace/views/meteo.yaml
   - title: "Network"
     cards: !include lovelace/views/network.yaml
   - title: "Graphs"
     cards: !include lovelace/views/graphs.yaml
+  - title: "Lights"
+    cards: !include lovelace/views/lights.yaml
