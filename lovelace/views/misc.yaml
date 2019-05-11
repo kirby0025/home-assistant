@@ -1,0 +1,23 @@
+- title: "Discogs"
+  type: "custom:discogs-card"
+  entity: sensor.discogs_random_record
+- title: "Automatisation"
+  type: entities
+  entities:
+    - automation.rain_incoming
+    - automation.home_hyrule_ovh_changed
+    - automation.raspotify_stop
+    - automation.wol_promox_we
+    - automation.raspotify_start
+    - automation.wol_promox_wd
+    - automation.neige_incoming
+- title: "Interrupteur"
+  type: entities
+  entities:
+    - switch.raspotify
+    - switch.fixe
+    - switch.proxmox
+- type: entities
+  title: "Mise \u00e0 jour"
+  entities:
+    - updater.updater

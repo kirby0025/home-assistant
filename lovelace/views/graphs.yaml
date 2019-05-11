@@ -1,0 +1,12 @@
+- title: "Pihole"
+  type: history-graph
+  entities:
+    - entity: sensor.pi_hole_dns_queries_today
+      name: "DNS queries today"
+    - entity: sensor.pi_hole_ads_blocked_today
+      name: "Ads blocked today"
+    - entity: sensor.pi_hole_dns_unique_domains
+      name: "Unique domain query"
+    - entity: sensor.pi_hole_domains_blocked
+      name: "Domains blocked"
+

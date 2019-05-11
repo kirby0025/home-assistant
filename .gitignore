@@ -9,6 +9,8 @@
 !scripts
 !custom_components
 !panels
+!lovelace
+!www
 
 # Ignore folders.
 .storage

@@ -1,105 +1,15 @@
+resources:
+  - url: /local/discogs-card.js
+    type: module
+
 title: Home
 views:
-  - title : Default
+  - title : Misc
     path: "default_view"
-    badges:
-      - binary_sensor.workday_sensor
-      - calendar.personnel_holiday
-      - sensor.discogs
-      - sensor.waqi_villeurbanne_place_grandclement_france
-    cards:
-      - title: "Automatisation"
-        type: entities
-        entities:
-          - automation.rain_incoming
-          - automation.home_hyrule_ovh_changed
-          - automation.raspotify_stop
-          - automation.wol_promox_we
-          - automation.raspotify_start
-          - automation.wol_promox_wd
-          - automation.neige_incoming
-      - title: "Interrupteur"
-        type: entities
-        entities:
-          - switch.raspotify
-          - switch.fixe
-          - switch.proxmox
-      - type: entities
-        title: "Mise \u00e0 jour"
-        entities:
-          - updater.updater
-      - type: weather-forecast
-        entity: weather.villeurbanne
+    cards: !include lovelace/views/misc.yaml
   - title: "Meteo"
-    cards:
-      - title: "Air Pollution"
-        type: history-graph
-        entities:
-          - entity: sensor.waqi_villeurbanne_place_grandclement_france
-            name: "PM10"
-        hours_to_show: 48
-      - title: "Meteo"
-        type: weather-forecast
-        entity: weather.villeurbanne
+    cards: !include lovelace/views/meteo.yaml
   - title: "Network"
-    cards:
-      - title: "Domain name expiration"
-        type: horizontal-stack
-        cards:
-          - type: sensor
-            entity: sensor.whois_main
-            name: "Hyrule.ovh"
-          - type: sensor
-            entity: sensor.whois_lastname
-            name: "Laithier.ovh"
-      - title: "Certificate expiration"
-        type: horizontal-stack
-        cards:
-          - type: sensor
-            entity: sensor.cert_main
-            name: "Hyrule.ovh"
-          - type: sensor
-            entity: sensor.cert_home
-            name: "Hass"
-      - title: "Certificate expiration"
-        type: horizontal-stack
-        cards:
-          - type: sensor
-            entity: sensor.cert_smtp
-            name: "Smtp"
-      - title: "DNS"
-        type: horizontal-stack
-        cards:
-          - type: sensor
-            entity: sensor.home
-            name: "Home.hyrule.ovh"
-          - type: sensor
-            entity: sensor.main
-            name: "Hyrule.ovh"
-      - type: entities
-        title: "Physical"
-        entities:
-          - switch.fixe
-          - switch.proxmox
-          - binary_sensor.portable
-        show_header_toggle: false
-      - type: entities
-        title: "Virtual"
-        entities:
-          - switch.emby
-          - switch.sharing
-          - switch.pihole
-          - switch.jukebox
+    cards: !include lovelace/views/network.yaml
   - title: "Graphs"
-    cards:
-      - title: "Pihole"
-        type: history-graph
-        entities:
-          - entity: sensor.pi_hole_dns_queries_today
-            name: "DNS queries today"
-          - entity: sensor.pi_hole_ads_blocked_today
-            name: "Ads blocked today"
-          - entity: sensor.pi_hole_dns_unique_domains
-            name: "Unique domain query"
-          - entity: sensor.pi_hole_domains_blocked
-            name: "Domains blocked"
+    cards: !include lovelace/views/graphs.yaml

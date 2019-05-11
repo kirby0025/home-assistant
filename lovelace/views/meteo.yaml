@@ -1,0 +1,10 @@
+- title: "Air Pollution"
+  type: history-graph
+  entities:
+    - entity: sensor.waqi_villeurbanne_place_grandclement_france
+      name: "PM10"
+  hours_to_show: 48
+- title: "Meteo"
+  type: weather-forecast
+  entity: weather.villeurbanne
+
