@@ -7,4 +7,7 @@
 - title: "Meteo"
   type: weather-forecast
   entity: weather.villeurbanne
+- title: "Meteo"
+  type: weather-forecast
+  entity: weather.besancon
 

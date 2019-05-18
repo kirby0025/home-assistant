@@ -63,7 +63,18 @@ calendar:
         calendar: Personnel
         search: 'Holiday'
 meteo_france:
-  - city: !secret code_postal
+  - city: !secret code_postal1
+    monitored_conditions:
+        - rain_chance
+        - freeze_chance
+        - thunder_chance
+        - snow_chance
+        - weather
+        - next_rain
+        - wind_speed
+        - temperature
+        - uv
+  - city: !secret code_postal2
     monitored_conditions:
         - rain_chance
         - freeze_chance

@@ -1,0 +1,7 @@
+- type: light
+  entity: light.zigate_001788010472d63c_11
+  name: Salon
+- type: light
+  entity: light.zigate_001788010434a1ff_11
+  name: Chambre
+
