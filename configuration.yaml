@@ -90,11 +90,6 @@ meteo_france:
 zigate:
   gpio: true
 
-panel_custom:
-  - name: zigate
-    sidebar_title: ZiGate
-    sidebar_icon: mdi:zigbee
-
 # Sensors
 automation: !include automations.yaml
 binary_sensor: !include binarysensors.yaml
