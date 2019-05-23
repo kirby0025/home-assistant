@@ -4,13 +4,9 @@
 - title: "Automatisation"
   type: entities
   entities:
-    - automation.rain_incoming
     - automation.home_hyrule_ovh_changed
-    - automation.raspotify_stop
     - automation.wol_promox_we
-    - automation.raspotify_start
     - automation.wol_promox_wd
-    - automation.neige_incoming
 - title: "Interrupteur"
   type: entities
   entities:
