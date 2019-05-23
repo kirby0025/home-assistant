@@ -36,3 +36,8 @@
       command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start vm 111'
       command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 111'
       friendly_name: Pihole
+    mineos:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop vm 122'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start vm 122'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 122'
+      friendly_name: MineOS
