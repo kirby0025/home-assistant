@@ -1,37 +1,3 @@
-- id: '1548543406979'
-  alias: WOL-Promox-WD
-  trigger:
-  - minutes: /1
-    platform: time_pattern
-  condition:
-  - condition: state
-    entity_id: switch.proxmox
-    state: 'off'
-  - condition: state
-    entity_id: binary_sensor.portable
-    state: 'on'
-  action:
-  - alias: ''
-    data:
-      entity_id: switch.proxmox
-    service: switch.turn_on
-- id: '1548543406979'
-  alias: WOL-Promox-WE
-  trigger:
-  - at: '11:30'
-    platform: time
-  condition:
-  - condition: state
-    entity_id: switch.proxmox
-    state: 'off'
-  - condition: state
-    entity_id: binary_sensor.workday_sensor
-    state: 'off'
-  action:
-  - alias: ''
-    data:
-      entity_id: switch.proxmox
-    service: switch.turn_on
 - id: '1548694944674'
   alias: home.hyrule.ovh changed
   trigger:
@@ -43,26 +9,6 @@
       message: ''
       title: Public IP changed to {{ states.sensor.home.state }}
     service: notify.email_kirby
-- id: '1550611366131'
-  alias: WoL-Fixe
-  trigger:
-  - hours: '*'
-    minutes: '''/1'''
-    platform: time_pattern
-    seconds: '*'
-  condition:
-  - condition: state
-    entity_id: binary_sensor.portable
-    state: 'off'
-  action:
-  - data:
-      entity_id: switch.fixe
-    service: switch.turn_on
-- id: '1550611422711'
-  alias: WoL-Fixe
-  trigger: []
-  condition: []
-  action: []
 - id: '1550754446981'
   alias: Cert-expired
   trigger:
@@ -78,7 +24,45 @@
   condition: []
   action:
   - data_template:
-      message: 'Cert renewal issue for {{ states[trigger.to_state.domain][trigger.to_state.object_id].name }} :
-        {{ states[trigger.to_state.domain][trigger.to_state.object_id].state }} days remaining'
+      message: 'Cert renewal issue for {{ states[trigger.to_state.domain][trigger.to_state.object_id].name
+        }} : {{ states[trigger.to_state.domain][trigger.to_state.object_id].state
+        }} days remaining'
       title: Certificate renewal failure
     service: notify.email_kirby
+- id: 41171191b1914c5dacdbfbaeef735399
+  alias: Proxmox
+  trigger:
+  - at: '10:00:00'
+    platform: time
+  condition:
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'off'
+  action:
+  - data:
+      entity_id: switch.proxmox
+    service: switch.turn_on
+- id: d836acb077534690a54dac068df49e59
+  alias: Proxmox2
+  trigger:
+  - at: '11:30:00'
+    platform: time
+  condition:
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'on'
+  action:
+  - data:
+      entity_id: switch.proxmox
+    service: switch.turn_on
+- alias: light-extinction
+  trigger:
+  - at: '00:00:00'
+    platform: time
+  condition:
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'on'
+  action:
+    entity_id: group.all_lights
+    service: light.turn_off

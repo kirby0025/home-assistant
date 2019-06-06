@@ -1,3 +1,30 @@
+- title: "Temperature"
+  type: history-graph
+  entities:
+    - entity: sensor.zigate_00158d00033e0251_temperature
+      name: "Salon"
+      hours_to_show: 48 
+    - entity: sensor.zigate_00158d00033de0e7_temperature
+      name: "Frigo"
+      hours_to_show: 48 
+- title: "Humidity"
+  type: history-graph
+  entities:
+    - entity: sensor.zigate_00158d00033e0251_humidity
+      name: "Salon"
+      hours_to_show: 48 
+    - entity: sensor.zigate_00158d00033de0e7_humidity
+      name: "Frigo"
+      hours_to_show: 48 
+- title: "Pressure"
+  type: history-graph
+  entities:
+    - entity: sensor.zigate_00158d00033e0251_pressure
+      name: "Salon"
+      hours_to_show: 48 
+    - entity: sensor.zigate_00158d00033de0e7_pressure
+      name: "Frigo"
+      hours_to_show: 48 
 - title: "Pihole"
   type: history-graph
   entities:

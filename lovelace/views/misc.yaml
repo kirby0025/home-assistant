@@ -1,19 +1,41 @@
 - title: "Discogs"
-  type: "custom:discogs-card"
-  entity: sensor.discogs_random_record
+  type: vertical-stack
+  show_header_toggle: Off
+  cards:
+    - title: "Discogs"
+      type: "custom:discogs-card"
+      show_header_toggle: Off
+      entity: sensor.discogs_random_record
+    - type: horizontal-stack
+      cards:
+        - type: sensor
+          name: "Owned"
+          entity: sensor.discogs_collection
+        - type: sensor
+          name: "Wantlist"
+          entity: sensor.discogs_wantlist
+- title: Infos
+  type: entities
+  show_header_toggle: Off
+  entities:
+    - binary_sensor.workday_sensor
+    - calendar.personnel_holiday
 - title: "Automatisation"
   type: entities
+  show_header_toggle: Off
   entities:
     - automation.home_hyrule_ovh_changed
-    - automation.wol_promox_we
-    - automation.wol_promox_wd
+    - automation.proxmox
+    - automation.proxmox2
 - title: "Interrupteur"
   type: entities
+  show_header_toggle: Off
   entities:
     - switch.raspotify
     - switch.fixe
     - switch.proxmox
 - type: entities
   title: "Mise \u00e0 jour"
+  show_header_toggle: Off
   entities:
     - updater.updater
