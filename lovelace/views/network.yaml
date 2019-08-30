@@ -1,12 +1,24 @@
-- title: "Domain name expiration"
-  type: horizontal-stack
-  cards:
-    - type: sensor
-      entity: sensor.whois_main
-      name: "Hyrule.ovh"
-    - type: sensor
-      entity: sensor.whois_lastname
-      name: "Laithier.ovh"
+- type: entities
+  title: "Physical"
+  entities:
+    - switch.zigate_7cb03eaa0a0696f9_3
+    - switch.proxmox
+  show_header_toggle: false
+- type: entities
+  title: "Virtual"
+  show_header_toggle: false
+  entities:
+    - switch.emby
+    - switch.sharing
+    - switch.pihole
+    - switch.jukebox
+    - switch.mineos
+- type: entities
+  title: "Soft"
+  show_header_toggle: false
+  entities:
+    - switch.grafana
+    - switch.prometheus
 - title: "Certificate expiration"
   type: horizontal-stack
   cards:
@@ -31,18 +43,3 @@
     - type: sensor
       entity: sensor.main
       name: "Hyrule.ovh"
-- type: entities
-  title: "Physical"
-  entities:
-    - switch.fixe
-    - switch.proxmox
-    - binary_sensor.portable
-  show_header_toggle: false
-- type: entities
-  title: "Virtual"
-  entities:
-    - switch.emby
-    - switch.sharing
-    - switch.pihole
-    - switch.jukebox
-    - switch.mineos

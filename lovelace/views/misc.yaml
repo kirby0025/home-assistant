@@ -27,11 +27,13 @@
     - automation.home_hyrule_ovh_changed
     - automation.proxmox
     - automation.proxmox2
+    - automation.light_extinction
+    - automation.switch_fast
+    - automation.cert_expired
 - title: "Interrupteur"
   type: entities
   show_header_toggle: Off
   entities:
-    - switch.raspotify
     - switch.fixe
     - switch.proxmox
 - type: entities

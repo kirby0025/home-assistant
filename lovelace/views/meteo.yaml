@@ -1,13 +1,41 @@
+- title: "Temperature"
+  type: entities
+  show_header_toggle: false
+  entities:
+    - entity: sensor.besancon_temperature
+      name: Besancon
+    - entity: sensor.villeurbanne_temperature
+      name: Villeurbanne
+    - entity: sensor.zigate_00158d00033de0e7_temperature
+      name: Frigo
+    - entity: sensor.zigate_00158d00033e0251_temperature
+      name: Salon
+- title: "Wind"
+  type: entities
+  show_header_toggle: false
+  entities:
+    - entity: sensor.besancon_wind_speed
+      name: Besancon
+    - entity: sensor.villeurbanne_wind_speed
+      name: Villeurbanne
+- title: "Weather"
+  type: entities
+  show_header_toggle: false
+  entities:
+    - entity: sensor.besancon_weather
+      name: Besancon
+    - entity: sensor.villeurbanne_weather
+      name: Villeurbanne
 - title: "Air Pollution"
   type: history-graph
   entities:
     - entity: sensor.waqi_villeurbanne_place_grandclement_france
       name: "PM10"
   hours_to_show: 48
-- title: "Meteo"
-  type: weather-forecast
-  entity: weather.villeurbanne
-- title: "Meteo"
-  type: weather-forecast
-  entity: weather.besancon
-
+#- title: "Meteo"
+#  type: weather-forecast
+#  entity: weather.villeurbanne
+#- title: "Meteo"
+#  type: weather-forecast
+#  entity: weather.besancon
+#
