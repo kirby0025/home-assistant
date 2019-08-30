@@ -40,6 +40,19 @@ logbook:
 # Enables a map showing the location of tracked devices
 map:
 
+prometheus:
+  namespace: "hass"
+  include:
+    entities:    
+      - sensor.villeurbanne_temperature
+      - sensor.besanson_temperature
+      - sensor.waqi_villeurbanne_place_grandclement_france
+      - sensor.zigate_00158d00033de0e7_temperature
+      - sensor.zigate_00158d00033e0251_temperature
+      - sensor.zigate_00158d00033de0e7_humidity
+      - sensor.zigate_00158d00033e0251_humidity
+      - calendar.personnel_holiday
+
 notify:
   - name: email_kirby
     platform: smtp
@@ -66,25 +79,15 @@ meteo_france:
   - city: !secret code_postal1
     monitored_conditions:
         - rain_chance
-        - freeze_chance
-        - thunder_chance
-        - snow_chance
         - weather
-        - next_rain
         - wind_speed
         - temperature
-        - uv
   - city: !secret code_postal2
     monitored_conditions:
         - rain_chance
-        - freeze_chance
-        - thunder_chance
-        - snow_chance
         - weather
-        - next_rain
         - wind_speed
         - temperature
-        - uv
 
 # Zigate
 zigate:
