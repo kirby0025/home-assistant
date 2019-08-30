@@ -57,7 +57,7 @@
     service: switch.turn_on
 - alias: light-extinction
   trigger:
-  - at: '00:00:00'
+  - at: 00:00:00
     platform: time
   condition:
   - condition: state
@@ -66,3 +66,72 @@
   action:
     entity_id: group.all_lights
     service: light.turn_off
+  id: fa5b0bd8571244918acc5c01367fde21
+- id: '1559917285401'
+  alias: Switch-fast
+  trigger:
+  - entity_id: binary_sensor.zigate_00158d0003269795_onoff
+    from: 'on'
+    platform: state
+    to: 'off'
+  - entity_id: binary_sensor.zigate_00158d00032697b3_onoff
+    from: 'on'
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      brightness_pct: '60'
+      entity_id: ' light.zigate_001788010472d63c_11'
+    service: light.toggle
+- id: '1560635907569'
+  alias: Toggle-light-brightness
+  trigger:
+  - entity_id: sensor.zigate_00158d0003269795_multiclick
+    from: '0'
+    platform: state
+    to: '2'
+  - entity_id: sensor.zigate_00158d00032697b3_multiclick
+    from: '0'
+    platform: state
+    to: '2'
+  condition: []
+  action:
+  - data_template:
+      brightness_pct: "{% if states.light.zigate_001788010472d63c_11.attributes[brightness_pct]\
+        \ > 40 %}\n  35\n{% else %}\n  60\n{% endif %}\n"
+      entity_id: light.zigate_001788010472d63c_11
+    service: light.turn_on
+- id: '1563774897174'
+  alias: TurnOn-Fixe-semaine
+  trigger:
+  - at: 07:30:00
+    platform: time
+  condition:
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'Off'
+  - condition: state
+    entity_id: calendar.personnel_holiday
+    state: 'On'
+  action:
+  - data:
+      entity_id: switch.zigate_7cb03eaa0a0696f9_3
+    service: switch.turn_on
+- id: '1565351494444'
+  alias: Turnoff-Fixe-semaine
+  trigger:
+  - at: 09:15
+    platform: time
+  condition:
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'Off'
+  - condition: state
+    entity_id: calendar.personnel_holiday
+    state: 'On'
+  action:
+  - alias: ''
+    data:
+      entity_id: switch.zigate_7cb03eaa0a0696f9_3
+    service: switch.turn_off
