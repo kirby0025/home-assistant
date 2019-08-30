@@ -10,10 +10,14 @@
   broadcast_address: "192.168.1.255"
 - platform: command_line
   switches:
-    raspotify:
-      command_on: "sudo systemctl start raspotify"
-      command_off: "sudo systemctl stop raspotify"
-      command_state: "sudo systemctl status raspotify"
+    prometheus:
+      command_on: "sudo systemctl start prometheus"
+      command_off: "sudo systemctl stop prometheus"
+      command_state: "sudo systemctl status prometheus"
+    grafana:
+      command_on: "sudo systemctl start grafana-server"
+      command_off: "sudo systemctl stop grafana-server"
+      command_state: "sudo systemctl status grafana-server"
 - platform: command_line
   switches:
     emby:
