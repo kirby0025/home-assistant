@@ -111,9 +111,6 @@
   - condition: state
     entity_id: binary_sensor.workday_sensor
     state: 'Off'
-  - condition: state
-    entity_id: calendar.personnel_holiday
-    state: 'On'
   action:
   - data:
       entity_id: switch.zigate_7cb03eaa0a0696f9_3
