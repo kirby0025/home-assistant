@@ -36,12 +36,42 @@
       command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 103'
       friendly_name: Jukebox
     pihole:
-      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop vm 111'
-      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start vm 111'
-      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 111'
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop lxc 114'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start lxc 114'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status lxc 114'
       friendly_name: Pihole
     mineos:
       command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop vm 122'
       command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start vm 122'
       command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status vm 122'
       friendly_name: MineOS
+    gitea:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop lxc 134'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start lxc 134'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status lxc 134'
+      friendly_name: Gitea
+    mysql:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop lxc 130'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start lxc 130'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status lxc 130'
+      friendly_name: Mysql
+    haproxy:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop lxc 111'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start lxc 111'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status lxc 111'
+      friendly_name: Haproxy
+    ansible:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop lxc 113'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start lxc 113'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status lxc 113'
+      friendly_name: Ansible
+    nextcloud:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop lxc 116'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start lxc 116'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status lxc 116'
+      friendly_name: Nextcloud
+    wallabag:
+      command_off: '/home/homeassistant/.homeassistant/scripts/proxmox stop lxc 139'
+      command_on: '/home/homeassistant/.homeassistant/scripts/proxmox start lxc 139'
+      command_state: '/home/homeassistant/.homeassistant/scripts/proxmox status lxc 139'
+      friendly_name: Wallabag
