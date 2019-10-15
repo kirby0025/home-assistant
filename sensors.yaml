@@ -8,12 +8,6 @@
   hostname: !secret dns_main
   name: main
   resolver: 1.1.1.1
-- platform: whois
-  domain: !secret dns_main
-  name: whois_main
-- platform: whois
-  domain: !secret dns_lastname
-  name: whois_lastname
 ################################
 #
 #           Disabled haveibeenpwen due to 403 erros
@@ -37,10 +31,6 @@
 - platform: cert_expiry
   host: !secret cert_main
   name: !secret cert_main_name
-- platform: cert_expiry
-  host: !secret cert_smtp
-  port: !secret cert_smtp_port
-  name: !secret cert_smtp_name
 - platform: cert_expiry
   host: !secret cert_hass
   name: !secret cert_hass_name
