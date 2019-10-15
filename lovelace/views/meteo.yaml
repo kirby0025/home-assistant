@@ -22,9 +22,9 @@
   type: entities
   show_header_toggle: false
   entities:
-    - entity: sensor.besancon_weather
+    - entity: weather.besancon 
       name: Besancon
-    - entity: sensor.villeurbanne_weather
+    - entity: weather.villeurbanne
       name: Villeurbanne
 - title: "Air Pollution"
   type: history-graph

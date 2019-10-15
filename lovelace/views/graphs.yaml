@@ -5,7 +5,7 @@
       name: "Salon"
       hours_to_show: 48 
     - entity: sensor.zigate_00158d00033de0e7_temperature
-      name: "Frigo"
+      name: "Chambre"
       hours_to_show: 48 
 - title: "Humidity"
   type: history-graph
@@ -14,7 +14,7 @@
       name: "Salon"
       hours_to_show: 48 
     - entity: sensor.zigate_00158d00033de0e7_humidity
-      name: "Frigo"
+      name: "Chambre"
       hours_to_show: 48 
 - title: "Pressure"
   type: history-graph
@@ -23,7 +23,7 @@
       name: "Salon"
       hours_to_show: 48 
     - entity: sensor.zigate_00158d00033de0e7_pressure
-      name: "Frigo"
+      name: "Chambre"
       hours_to_show: 48 
 - title: "Pihole"
   type: history-graph

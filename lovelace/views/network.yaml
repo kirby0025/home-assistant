@@ -13,6 +13,12 @@
     - switch.pihole
     - switch.jukebox
     - switch.mineos
+    - switch.haproxy
+    - switch.mysql
+    - switch.gitea
+    - switch.wallabag
+    - switch.ansible
+    - switch.nextcloud
 - type: entities
   title: "Soft"
   show_header_toggle: false
@@ -28,14 +34,8 @@
     - type: sensor
       entity: sensor.cert_home
       name: "Hass"
-- title: "Certificate expiration"
-  type: horizontal-stack
-  cards:
-    - type: sensor
-      entity: sensor.cert_smtp
-      name: "Smtp"
 - title: "DNS"
-  type: horizontal-stack
+  type: vertical-stack
   cards:
     - type: sensor
       entity: sensor.home
