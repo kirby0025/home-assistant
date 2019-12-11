@@ -53,18 +53,18 @@ prometheus:
       - sensor.zigate_00158d00033e0251_humidity
       - calendar.personnel_holiday
 
-notify:
-  - name: email_kirby
-    platform: smtp
-    server: !secret smtp_server
-    port: !secret smtp_port
-    timeout: 15
-    sender: !secret smtp_sender
-    encryption: starttls
-    username: !secret smtp_user
-    password: !secret smtp_password
-    recipient: !secret smtp_recipient
-    sender_name: Home Assistant
+#notify:
+#  - name: email_kirby
+#    platform: smtp
+#    server: !secret smtp_server
+#    port: !secret smtp_port
+#    timeout: 15
+#    sender: !secret smtp_sender
+#    encryption: starttls
+#    username: !secret smtp_user
+#    password: !secret smtp_password
+#    recipient: !secret smtp_recipient
+#    sender_name: Home Assistant
 
 calendar:
   - platform: caldav
@@ -92,6 +92,13 @@ meteo_france:
 # Zigate
 zigate:
   gpio: true
+
+influxdb:
+  host: influxdb.hyrule.local
+  port: 8086
+  database: hass
+  username: hass
+  password: !secret influx_password
 
 # Sensors
 automation: !include automations.yaml

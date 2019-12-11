@@ -1,6 +1,8 @@
 resources:
   - url: /local/discogs-card.js
     type: module
+  - url: /local/button-card.js
+    type: module
 
 title: Home
 views:
@@ -15,3 +17,5 @@ views:
     cards: !include lovelace/views/graphs.yaml
   - title: "Lights"
     cards: !include lovelace/views/lights.yaml
+#  - title: "Test"
+#    cards: !include lovelace/views/test.yaml

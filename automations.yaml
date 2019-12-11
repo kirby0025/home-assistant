@@ -1,34 +1,3 @@
-- id: '1548694944674'
-  alias: home.hyrule.ovh changed
-  trigger:
-  - entity_id: sensor.home
-    platform: state
-  condition: []
-  action:
-  - data:
-      message: ''
-      title: Public IP changed to {{ states.sensor.home.state }}
-    service: notify.email_kirby
-- id: '1550754446981'
-  alias: Cert-expired
-  trigger:
-  - below: '15'
-    entity_id: sensor.cert_main
-    platform: numeric_state
-  - below: '15'
-    entity_id: sensor.cert_smtp
-    platform: numeric_state
-  - below: '15'
-    entity_id: sensor.cert_home
-    platform: numeric_state
-  condition: []
-  action:
-  - data_template:
-      message: 'Cert renewal issue for {{ states[trigger.to_state.domain][trigger.to_state.object_id].name
-        }} : {{ states[trigger.to_state.domain][trigger.to_state.object_id].state
-        }} days remaining'
-      title: Certificate renewal failure
-    service: notify.email_kirby
 - id: 41171191b1914c5dacdbfbaeef735399
   alias: Proxmox
   trigger:
@@ -105,30 +74,13 @@
 - id: '1563774897174'
   alias: TurnOn-Fixe-semaine
   trigger:
-  - at: 07:30:00
+  - at: 07:45:00
     platform: time
   condition:
   - condition: state
     entity_id: binary_sensor.workday_sensor
-    state: 'Off'
+    state: 'on'
   action:
   - data:
       entity_id: switch.zigate_7cb03eaa0a0696f9_3
     service: switch.turn_on
-- id: '1565351494444'
-  alias: Turnoff-Fixe-semaine
-  trigger:
-  - at: 09:15
-    platform: time
-  condition:
-  - condition: state
-    entity_id: binary_sensor.workday_sensor
-    state: 'Off'
-  - condition: state
-    entity_id: calendar.personnel_holiday
-    state: 'On'
-  action:
-  - alias: ''
-    data:
-      entity_id: switch.zigate_7cb03eaa0a0696f9_3
-    service: switch.turn_off
