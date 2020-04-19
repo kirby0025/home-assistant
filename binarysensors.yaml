@@ -1,3 +1,7 @@
 - platform: workday
   country: FRA
-  workdays: [tue, wed, thu, fri]
+  workdays: [mon, tue, wed, thu, fri]
+- platform: ping
+  host: 192.168.1.100
+  scan_interval: 15
+  name: ping_fixe

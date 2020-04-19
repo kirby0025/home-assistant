@@ -53,6 +53,9 @@
       brightness_pct: '60'
       entity_id: ' light.zigate_001788010472d63c_11'
     service: light.toggle
+  - data:
+      entity_id: switch.zigate_7cb03eaa0a06c8e9_3
+    service: switch.toggle
 - id: '1560635907569'
   alias: Toggle-light-brightness
   trigger:
@@ -74,7 +77,7 @@
 - id: '1563774897174'
   alias: TurnOn-Fixe-semaine
   trigger:
-  - at: 07:45:00
+  - at: 07:55:00
     platform: time
   condition:
   - condition: state
@@ -84,3 +87,40 @@
   - data:
       entity_id: switch.zigate_7cb03eaa0a0696f9_3
     service: switch.turn_on
+- id: '1579861408622'
+  alias: TurnOff-Pc-Fixe-Semaine
+  description: ''
+  trigger:
+  - at: 00:15
+    platform: time
+  condition:
+  - condition: state
+    entity_id: binary_sensor.ping_fixe
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'on'
+  action:
+  - entity_id: switch.zigate_7cb03eaa0a0696f9_3
+    service: switch.turn_off
+- id: '1579881913060'
+  alias: VM-Down
+  description: ''
+  trigger:
+  - entity_id:
+    - switch.gitea
+    - switch.nextcloud
+    - switch.haproxy
+    - switch.emby
+    - switch.sharing
+    - switch.pihole
+    from: 'on'
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - alias: ''
+    data:
+      data_template:
+        message: '{{ trigger.to_state_attributes.friendly_name }} est mort subitement'
+    service: notify.mobile_app_motog7

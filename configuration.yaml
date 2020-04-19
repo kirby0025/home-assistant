@@ -5,13 +5,13 @@ homeassistant:
   elevation: !secret elev
   unit_system: metric
   time_zone: CET
-  customize: !include customize.yaml
 
 lovelace:
   mode: yaml
 
+system_health:
+
 http:
-  api_password: !secret password_api
   base_url: !secret hass_url
   use_x_forwarded_for: true
   trusted_proxies: 127.0.0.1
@@ -53,6 +53,26 @@ prometheus:
       - sensor.zigate_00158d00033e0251_humidity
       - calendar.personnel_holiday
 
+proxmoxve:
+  - host: !secret proxmox_host
+    username: !secret proxmox_username
+    password: !secret proxmox_password
+    verify_ssl: false
+    nodes:
+      - node: proxmox
+        vms:
+          - 107
+          - 108
+          - 103
+          - 122
+        containers:
+          - 114
+          - 134
+          - 130
+          - 111
+          - 113
+          - 116
+          - 139
 #notify:
 #  - name: email_kirby
 #    platform: smtp
@@ -89,9 +109,19 @@ meteo_france:
         - wind_speed
         - temperature
 
+zabbix:
+  host: !secret zabbix_host
+  path: /zabbix/
+  ssl: false
+  username: !secret zabbix_username
+  password: !secret zabbix_password
+
+mobile_app:
+
 # Zigate
 zigate:
   gpio: true
+  admin_panel: true
 
 influxdb:
   host: influxdb.hyrule.local

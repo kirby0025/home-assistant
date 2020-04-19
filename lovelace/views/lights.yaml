@@ -2,6 +2,11 @@
   entity: light.zigate_001788010472d63c_11
   name: Salon
 - type: light
+  entity: light.zigate_00178801086898e6_11
+  name: Salon2
+- type: light
   entity: light.zigate_001788010434a1ff_11
   name: Chambre
-
+- type: light
+  entity: light.zigate_001788010868f2f7_11
+  name: Chevet

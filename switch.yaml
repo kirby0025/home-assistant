@@ -1,11 +1,11 @@
 - platform: wake_on_lan
   name: "Proxmox"
-  mac_address: "00:01:2E:49:76:36"
+  mac: "00:01:2E:49:76:36"
   host: "192.168.1.150"
   broadcast_address: "192.168.1.255"
 - platform: wake_on_lan
   name: "Fixe"
-  mac_address: "D0:50:99:45:F2:5C"
+  mac: "D0:50:99:45:F2:5C"
   host: "192.168.1.100"
   broadcast_address: "192.168.1.255"
 - platform: command_line

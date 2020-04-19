@@ -16,15 +16,6 @@
 ################################
 #- platform: haveibeenpwned
 #  email: !secret haveibeenpwned_email
-- platform: pi_hole
-  host: !secret pihole_host
-  monitored_conditions:
-    - ads_blocked_today
-    - dns_queries_today
-    - domains_being_blocked
-    - unique_domains
-    - unique_clients
-    - clients_ever_seen
 - platform: waqi
   token: !secret waqi_api
   locations: !secret waqi_locations
@@ -35,3 +26,8 @@
   host: !secret cert_hass
   name: !secret cert_hass_name
 - platform: moon
+- platform: zabbix
+  triggers:
+    name: Test Hosts trigger count
+    hostids: [10271,10272,10270,10084]
+    individual: true

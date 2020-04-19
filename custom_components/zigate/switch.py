@@ -6,12 +6,8 @@ https://home-assistant.io/components/switch.zigate/
 """
 import logging
 from homeassistant.components.switch import SwitchDevice, ENTITY_ID_FORMAT
-try:
-    from homeassistant.components.zigate import DOMAIN as ZIGATE_DOMAIN
-    from homeassistant.components.zigate import DATA_ZIGATE_ATTRS
-except ImportError:  # temporary until official support
-    from custom_components.zigate import DOMAIN as ZIGATE_DOMAIN
-    from custom_components.zigate import DATA_ZIGATE_ATTRS
+from . import DOMAIN as ZIGATE_DOMAIN
+from . import DATA_ZIGATE_ATTRS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -92,7 +88,7 @@ class ZiGateSwitch(SwitchDevice):
     @property
     def should_poll(self):
         """No polling needed for a ZiGate switch."""
-        return self._device.assumed_state
+        return False
 
     def update(self):
         self._device.refresh_device()
@@ -110,18 +106,24 @@ class ZiGateSwitch(SwitchDevice):
 
     def turn_on(self, **kwargs):
         """Turn the switch on."""
+        self._is_on = True
+        self.schedule_update_ha_state()
         self.hass.data[ZIGATE_DOMAIN].action_onoff(self._device.addr,
                                                    self._endpoint,
                                                    1)
 
     def turn_off(self, **kwargs):
         """Turn the device off."""
+        self._is_on = False
+        self.schedule_update_ha_state()
         self.hass.data[ZIGATE_DOMAIN].action_onoff(self._device.addr,
                                                    self._endpoint,
                                                    0)
 
     def toggle(self, **kwargs):
         """Toggle the device"""
+        self._is_on = not self._is_on
+        self.schedule_update_ha_state()
         self.hass.data[ZIGATE_DOMAIN].action_onoff(self._device.addr,
                                                    self._endpoint,
                                                    2)
@@ -132,9 +134,7 @@ class ZiGateSwitch(SwitchDevice):
         return {
             'addr': self._device.addr,
             'ieee': self._device.ieee,
-            'endpoint': self._endpoint,
-            'battery_voltage': self._device.get_value('battery_voltage'),
-            'battery_level': int(self._device.battery_percent),
+            'endpoint': self._endpoint
         }
 
 #     @property

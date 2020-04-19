@@ -8,13 +8,19 @@ import logging
 import voluptuous as vol
 import os
 import datetime
+import requests
+from aiohttp import web
+import zigate
 
+from homeassistant.components.http import HomeAssistantView
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_component import EntityComponent
+from homeassistant.components.group import \
+    ENTITY_ID_FORMAT as GROUP_ENTITY_ID_FORMAT
 from homeassistant.helpers.discovery import load_platform
 from homeassistant.helpers.event import track_time_change
 from homeassistant.const import (ATTR_BATTERY_LEVEL, CONF_PORT,
-                                 CONF_HOST,
+                                 CONF_HOST, CONF_SCAN_INTERVAL,
                                  ATTR_ENTITY_ID,
                                  EVENT_HOMEASSISTANT_START,
                                  EVENT_HOMEASSISTANT_STOP)
@@ -22,21 +28,23 @@ import homeassistant.helpers.config_validation as cv
 
 _LOGGER = logging.getLogger(__name__)
 
-REQUIREMENTS = ['zigate==0.29.4']
-# REQUIREMENTS = ['https://github.com/doudz/zigate/archive/dev.zip#1.0.0']
-DEPENDENCIES = ['persistent_notification']
-
 DOMAIN = 'zigate'
+SCAN_INTERVAL = datetime.timedelta(seconds=120)
+
 DATA_ZIGATE_DEVICES = 'zigate_devices'
 DATA_ZIGATE_ATTRS = 'zigate_attributes'
 ADDR = 'addr'
 IEEE = 'ieee'
 
+GROUP_NAME_ALL_ZIGATE = 'all zigate'
+ENTITY_ID_ALL_ZIGATE = GROUP_ENTITY_ID_FORMAT.format('all_zigate')
+
 SUPPORTED_PLATFORMS = ('sensor',
                        'binary_sensor',
                        'switch',
                        'light',
-                       'cover')
+                       'cover',
+                       'climate')
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
@@ -44,7 +52,10 @@ CONFIG_SCHEMA = vol.Schema({
         vol.Optional(CONF_HOST): cv.string,
         vol.Optional('channel'): cv.positive_int,
         vol.Optional('gpio'): cv.boolean,
-        vol.Optional('enable_led'): cv.boolean
+        vol.Optional('enable_led'): cv.boolean,
+        vol.Optional('polling'): cv.boolean,
+        vol.Optional(CONF_SCAN_INTERVAL): cv.positive_int,
+        vol.Optional('admin_panel'): cv.boolean,
     })
 }, extra=vol.ALLOW_EXTRA)
 
@@ -213,30 +224,68 @@ COPY_SCENE_SCHEMA = vol.Schema({
     vol.Required('to_scene'): cv.string,
 })
 
+BUILD_NETWORK_TABLE_SCHEMA = vol.Schema({
+    vol.Optional('force'): cv.boolean,
+    })
+
+ACTION_IAS_WARNING_SCHEMA = vol.Schema({
+    vol.Optional(ADDR): cv.string,
+    vol.Optional(IEEE): cv.string,
+    vol.Optional(ATTR_ENTITY_ID): cv.entity_id,
+    vol.Required('endpoint'): cv.string,
+    vol.Optional('mode'): cv.string,
+    vol.Optional('strobe'): cv.boolean,
+    vol.Optional('level'): cv.string,
+    vol.Optional('duration'): cv.positive_int,
+    vol.Optional('strobe_cycle'): cv.positive_int,
+    vol.Optional('strobe_level'): cv.string,
+})
+
+ACTION_IAS_SQUAWK_SCHEMA = vol.Schema({
+    vol.Optional(ADDR): cv.string,
+    vol.Optional(IEEE): cv.string,
+    vol.Optional(ATTR_ENTITY_ID): cv.entity_id,
+    vol.Required('endpoint'): cv.string,
+    vol.Optional('mode'): cv.string,
+    vol.Optional('strobe'): cv.boolean,
+    vol.Optional('level'): cv.string,
+})
+
 
 def setup(hass, config):
     """Setup zigate platform."""
-    import zigate
-
     port = config[DOMAIN].get(CONF_PORT)
     host = config[DOMAIN].get(CONF_HOST)
     gpio = config[DOMAIN].get('gpio', False)
     enable_led = config[DOMAIN].get('enable_led', True)
+    polling = config[DOMAIN].get('polling', True)
     channel = config[DOMAIN].get('channel')
+    scan_interval = config[DOMAIN].get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
+    admin_panel = config[DOMAIN].get('admin_panel', False)
+
     persistent_file = os.path.join(hass.config.config_dir,
                                    'zigate.json')
+
+    _LOGGER.debug('Port : %s', port)
+    _LOGGER.debug('Host : %s', host)
+    _LOGGER.debug('GPIO : %s', gpio)
+    _LOGGER.debug('Led : %s', enable_led)
+    _LOGGER.debug('Channel : %s', channel)
+    _LOGGER.debug('Scan interval : %s', scan_interval)
 
     myzigate = zigate.connect(port=port, host=host,
                               path=persistent_file,
                               auto_start=False,
                               gpio=gpio
                               )
+    _LOGGER.debug('ZiGate object created %s', myzigate)
 
     hass.data[DOMAIN] = myzigate
     hass.data[DATA_ZIGATE_DEVICES] = {}
     hass.data[DATA_ZIGATE_ATTRS] = {}
 
-    component = EntityComponent(_LOGGER, DOMAIN, hass)
+    component = EntityComponent(_LOGGER, DOMAIN, hass, scan_interval, GROUP_NAME_ALL_ZIGATE)
+    component.setup(config)
     entity = ZiGateComponentEntity(myzigate)
     hass.data[DATA_ZIGATE_DEVICES]['zigate'] = entity
     component.add_entities([entity])
@@ -244,9 +293,10 @@ def setup(hass, config):
     def device_added(**kwargs):
         device = kwargs['device']
         _LOGGER.debug('Add device {}'.format(device))
-        ieee = device.ieee or device.addr  # compatibility
+        ieee = device.ieee
         if ieee not in hass.data[DATA_ZIGATE_DEVICES]:
-            entity = ZiGateDeviceEntity(hass, device)
+            hass.data[DATA_ZIGATE_DEVICES][ieee] = None  # reserve
+            entity = ZiGateDeviceEntity(hass, device, polling)
             hass.data[DATA_ZIGATE_DEVICES][ieee] = entity
             component.add_entities([entity])
             if 'signal' in kwargs:
@@ -259,7 +309,7 @@ def setup(hass, config):
     def device_removed(**kwargs):
         # component.async_remove_entity
         device = kwargs['device']
-        ieee = device.ieee or device.addr  # compatibility
+        ieee = device.ieee
         hass.components.persistent_notification.create(
             'The ZiGate device {}({}) is gone.'.format(device.ieee,
                                                        device.addr),
@@ -285,7 +335,7 @@ def setup(hass, config):
 
     def attribute_updated(**kwargs):
         device = kwargs['device']
-        ieee = device.ieee or device.addr  # compatibility
+        ieee = device.ieee
         attribute = kwargs['attribute']
         _LOGGER.debug('Update attribute for device {} {}'.format(device,
                                                                  attribute))
@@ -306,7 +356,7 @@ def setup(hass, config):
     def device_updated(**kwargs):
         device = kwargs['device']
         _LOGGER.debug('Update device {}'.format(device))
-        ieee = device.ieee or device.addr  # compatibility
+        ieee = device.ieee
         entity = hass.data[DATA_ZIGATE_DEVICES].get(ieee)
         if not entity:
             _LOGGER.debug('Device not found {}, adding it'.format(device))
@@ -343,10 +393,10 @@ def setup(hass, config):
         myzigate.start_auto_save()
         myzigate.set_led(enable_led)
         version = myzigate.get_version_text()
-        if version < '3.0f':
+        if version < '3.1a':
             hass.components.persistent_notification.create(
                 ('Your zigate firmware is outdated, '
-                 'Please upgrade to 3.0f or later !'),
+                 'Please upgrade to 3.1a or later !'),
                 title='ZiGate')
         # first load
         for device in myzigate.devices:
@@ -357,7 +407,7 @@ def setup(hass, config):
 
         hass.bus.fire('zigate.started')
 
-    def stop_zigate(service_event):
+    def stop_zigate(service=None):
         myzigate.save_state()
         myzigate.close()
 
@@ -394,10 +444,10 @@ def setup(hass, config):
     def refresh_device(service):
         addr = _get_addr_from_service_request(service)
         if addr:
-            myzigate.refresh_device(addr)
+            myzigate.refresh_device(addr, full=True)
         else:
             for device in myzigate.devices:
-                device.refresh_device()
+                device.refresh_device(full=True)
 
     def discover_device(service):
         addr = _get_addr_from_service_request(service)
@@ -475,11 +525,8 @@ def setup(hass, config):
         myzigate.action_onoff(addr, endpoint, onoff, ontime, offtime, effect, gradient)
 
     def build_network_table(service):
-        table = myzigate.build_neighbours_table()
+        table = myzigate.build_neighbours_table(service.data.get('force', False))
         _LOGGER.debug('Neighbours table {}'.format(table))
-        entity = hass.data[DATA_ZIGATE_DEVICES].get('zigate')
-        if entity:
-            entity.network_table = table
 
     def ota_load_image(service):
         ota_image_path = service.data.get('imagepath')
@@ -548,6 +595,58 @@ def setup(hass, config):
         toscene = _to_int(service.data.get('to_scene'))
         myzigate.copy_scene(addr, endpoint, fromgroupaddr, fromscene, togroupaddr, toscene)
 
+    def ias_warning(service):
+        addr = _get_addr_from_service_request(service)
+        endpoint = _to_int(service.data.get('endpoint', '1'))
+        mode = service.data.get('mode', 'burglar')
+        strobe = service.data.get('strobe', True)
+        level = service.data.get('level', 'low')
+        duration = service.data.get('duration', 60)
+        strobe_cycle = service.data.get('strobe_cycle', 10)
+        strobe_level = service.data.get('strobe_level', 'low')
+        myzigate.action_ias_warning(addr, endpoint, mode, strobe, level, duration, strobe_cycle, strobe_level)
+
+    def ias_squawk(service):
+        addr = _get_addr_from_service_request(service)
+        endpoint = _to_int(service.data.get('endpoint', '1'))
+        mode = service.data.get('mode', 'armed')
+        strobe = service.data.get('strobe', True)
+        level = service.data.get('level', 'low')
+        myzigate.action_ias_squawk(addr, endpoint, mode, strobe, level)
+
+    def upgrade_firmware(service):
+        from zigate.flasher import flash
+        from zigate.firmware import download_latest
+        port = myzigate.connection._port
+        pizigate = False
+        if isinstance(myzigate, zigate.ZiGateGPIO):
+            pizigate = True
+        if myzigate._started and not pizigate:
+            msg = 'You should stop zigate first using service zigate.stop_zigate and put zigate in download mode.'
+            hass.components.persistent_notification.create(msg, title='ZiGate')
+            return
+        if pizigate:
+            stop_zigate()
+            myzigate.set_bootloader_mode()
+        backup_filename = 'zigate_backup_{:%Y%m%d%H%M%S}.bin'.format(datetime.datetime.now())
+        backup_filename = os.path.join(hass.config.config_dir, backup_filename)
+        flash(port, save=backup_filename)
+        msg = 'ZiGate backup created {}'.format(backup_filename)
+        hass.components.persistent_notification.create(msg, title='ZiGate')
+        firmware_path = service.data.get('path')
+        if not firmware_path:
+            firmware_path = download_latest()
+        flash(port, write=firmware_path)
+        msg = 'ZiGate flashed with {}'.format(firmware_path)
+        hass.components.persistent_notification.create(msg, title='ZiGate')
+        myzigate._version = None
+        if pizigate:
+            myzigate.set_running_mode()
+            start_zigate()
+        else:
+            msg = 'Now you have to unplug/replug the ZiGate USB key and then call service zigate.start_zigate'
+            hass.components.persistent_notification.create(msg, title='ZiGate')
+
     hass.bus.listen_once(EVENT_HOMEASSISTANT_START, start_zigate)
     hass.bus.listen_once(EVENT_HOMEASSISTANT_STOP, stop_zigate)
 
@@ -588,7 +687,12 @@ def setup(hass, config):
                            schema=REMOVE_GROUP_SCHEMA)
     hass.services.register(DOMAIN, 'action_onoff', action_onoff,
                            schema=ACTION_ONOFF_SCHEMA)
-    hass.services.register(DOMAIN, 'build_network_table', build_network_table)
+    hass.services.register(DOMAIN, 'build_network_table', build_network_table,
+                           schema=BUILD_NETWORK_TABLE_SCHEMA)
+    hass.services.register(DOMAIN, 'ias_warning', ias_warning,
+                           schema=ACTION_IAS_WARNING_SCHEMA)
+    hass.services.register(DOMAIN, 'ias_squawk', ias_squawk,
+                           schema=ACTION_IAS_SQUAWK_SCHEMA)
 
     hass.services.register(DOMAIN, 'ota_load_image', ota_load_image,
                            schema=OTA_LOAD_IMAGE_SCHEMA)
@@ -609,10 +713,96 @@ def setup(hass, config):
                            schema=SCENE_MEMBERSHIP_REQUEST_SCHEMA)
     hass.services.register(DOMAIN, 'copy_scene', copy_scene,
                            schema=COPY_SCENE_SCHEMA)
+    hass.services.register(DOMAIN, 'upgrade_firmware', upgrade_firmware)
     track_time_change(hass, refresh_devices_list,
                       hour=0, minute=0, second=0)
 
+    if admin_panel:
+        _LOGGER.debug('Start ZiGate Admin Panel on port 9998')
+        myzigate.start_adminpanel(prefix='/zigateproxy')
+
+        hass.http.register_view(ZiGateAdminPanel())
+        hass.http.register_view(ZiGateProxy())
+        custom_panel_config = {
+            "name": "zigateadmin",
+            "embed_iframe": False,
+            "trust_external": False,
+            "html_url": "/zigateadmin.html",
+        }
+
+        config = {}
+        config["_panel_custom"] = custom_panel_config
+
+        hass.components.frontend.async_register_built_in_panel(
+            component_name="custom",
+            sidebar_title='Zigate Admin',
+            sidebar_icon='mdi:zigbee',
+            frontend_url_path="zigateadmin",
+            config=config,
+            require_admin=True,
+        )
+
     return True
+
+
+class ZiGateAdminPanel(HomeAssistantView):
+    requires_auth = False
+    name = "zigateadmin"
+    url = "/zigateadmin.html"
+
+    async def get(self, request):
+        """Handle ZiGate admin panel requests."""
+        return web.Response(text=base_panel)
+
+
+class ZiGateProxy(HomeAssistantView):
+    requires_auth = False
+    name = "zigateproxy"
+    url = "/zigateproxy/{routename:.*}"
+
+    async def get(self, request, routename):
+        """Handle ZiGate proxy requests."""
+        r = requests.get('http://localhost:9998/'+routename)
+        headers = r.headers.copy()
+        headers['Access-Control-Allow-Origin'] = '*'
+        headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, PUT'
+        return web.Response(body=r.content, status=r.status_code, headers=headers)
+
+
+base_panel = '''
+<dom-module id='ha-panel-zigateadmin'>
+  <template>
+    <iframe src="/zigateproxy/" style="width:99%; height:99%; border:0"></iframe>
+  </template>
+</dom-module>
+
+<script>
+class HaPanelZiGateadmin extends Polymer.Element {
+  static get is() { return 'ha-panel-zigateadmin'; }
+
+  static get properties() {
+    return {
+      // Home Assistant object
+      hass: Object,
+      // If should render in narrow mode
+      narrow: {
+        type: Boolean,
+        value: false,
+      },
+      // If sidebar is currently shown
+      showMenu: {
+        type: Boolean,
+        value: false,
+      },
+      // Home Assistant panel info
+      // panel.config contains config passed to register_panel serverside
+      panel: Object
+    };
+  }
+}
+customElements.define(HaPanelZiGateadmin.is, HaPanelZiGateadmin);
+</script>
+'''
 
 
 class ZiGateComponentEntity(Entity):
@@ -621,7 +811,10 @@ class ZiGateComponentEntity(Entity):
         """Initialize the sensor."""
         self._device = myzigate
         self.entity_id = '{}.{}'.format(DOMAIN, 'zigate')
-        self.network_table = []
+
+    @property
+    def network_table(self):
+        return self._device._neighbours_table_cache
 
     @property
     def should_poll(self):
@@ -648,10 +841,15 @@ class ZiGateComponentEntity(Entity):
     @property
     def device_state_attributes(self):
         """Return the device specific state attributes."""
+        if not self._device.connection:
+            return {}
+        import zigate
         attrs = {'addr': self._device.addr,
                  'ieee': self._device.ieee,
                  'groups': self._device.groups,
-                 'network_table': self.network_table
+                 'network_table': self.network_table,
+                 'firmware_version': self._device.get_version_text(),
+                 'lib version': zigate.__version__
                  }
         return attrs
 
@@ -663,8 +861,9 @@ class ZiGateComponentEntity(Entity):
 class ZiGateDeviceEntity(Entity):
     '''Representation of ZiGate device'''
 
-    def __init__(self, hass, device):
+    def __init__(self, hass, device, polling=True):
         """Initialize the sensor."""
+        self._polling = polling
         self._device = device
         ieee = device.ieee or device.addr
         self.entity_id = '{}.{}'.format(DOMAIN, ieee)
@@ -678,7 +877,10 @@ class ZiGateDeviceEntity(Entity):
     @property
     def should_poll(self):
         """No polling."""
-        return False
+        return self._polling and self._device.receiver_on_when_idle()
+
+    def update(self):
+        self._device.refresh_device()
 
     @property
     def name(self):
@@ -697,17 +899,20 @@ class ZiGateDeviceEntity(Entity):
     @property
     def device_state_attributes(self):
         """Return the device specific state attributes."""
-        attrs = {'battery_voltage': self._device.get_value('battery_voltage'),
-                 ATTR_BATTERY_LEVEL: int(self._device.battery_percent),
-                 'lqi_percent': int(self._device.lqi_percent),
+        attrs = {'lqi_percent': int(self._device.lqi_percent),
                  'type': self._device.get_value('type'),
                  'manufacturer': self._device.get_value('manufacturer'),
                  'receiver_on_when_idle': self._device.receiver_on_when_idle(),
                  'missing': self._device.missing,
                  'generic_type': self._device.genericType,
                  'discovery': self._device.discovery,
-                 'groups': self._device.groups
+                 'groups': self._device.groups,
+                 'datecode': self._device.get_value('datecode')
                  }
+        if not self._device.receiver_on_when_idle():
+            attrs.update({'battery_voltage': self._device.get_value('battery_voltage'),
+                          ATTR_BATTERY_LEVEL: int(self._device.battery_percent),
+                          })
         attrs.update(self._device.info)
         return attrs
 
@@ -718,6 +923,10 @@ class ZiGateDeviceEntity(Entity):
         if self.state:
             last_24h = datetime.datetime.now() - datetime.timedelta(hours=24)
             last_24h = last_24h.strftime('%Y-%m-%d %H:%M:%S')
-            if self.state < last_24h:
+            if not self.state or self.state < last_24h:
                 return 'mdi:help'
         return 'mdi:access-point'
+
+    @property
+    def available(self):
+        return not self._device.missing

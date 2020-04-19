@@ -24,18 +24,7 @@
   type: entities
   show_header_toggle: Off
   entities:
-    - automation.proxmox
-    - automation.proxmox2
     - automation.light_extinction
     - automation.switch_fast
-- title: "Interrupteur"
-  type: entities
-  show_header_toggle: Off
-  entities:
-    - switch.fixe
-    - switch.proxmox
-- type: entities
-  title: "Mise \u00e0 jour"
-  show_header_toggle: Off
-  entities:
-    - updater.updater
+    - automation.turnoff_pc_fixe_semaine
+    - automation.turnon_fixe_semaine

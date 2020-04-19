@@ -2,7 +2,9 @@
   title: "Physical"
   entities:
     - switch.zigate_7cb03eaa0a0696f9_3
+    - switch.zigate_7cb03eaa0a06c8e9_3
     - switch.proxmox
+    - binary_sensor.ping_fixe
   show_header_toggle: false
 - type: entities
   title: "Virtual"
@@ -43,3 +45,21 @@
     - type: sensor
       entity: sensor.main
       name: "Hyrule.ovh"
+- title: "Proxmox"
+  type: horizontal-stack
+  cards:
+    - type: entities
+      entities:
+        - entity:  binary_sensor.proxmox_gitea_running
+          name: Gitea
+        - entity:  binary_sensor.proxmox_nextcloud_running
+          name: Nextcloud
+    - type: entities
+      entities:
+        - type: weblink
+          name: Gitea
+          url: https://gitea.hyrule.ovh
+        - type: weblink
+          name: Nextcloud
+          url: https://nextcloud.hyrule.ovh
+  show_header_toggle: false
